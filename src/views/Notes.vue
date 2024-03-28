@@ -23,7 +23,9 @@
     <table>
       <tr v-for="note in notes" :key="note.id">
         <td>{{ note.title }}</td>
-        <td>{{ note.description | truncate }}</td>
+        <td>
+          {{ note.description | truncate }}
+        </td>
         <td v-if="!note.complete">
           <input type="checkbox" v-model="note.complete" id="check" />
         </td>
@@ -63,7 +65,7 @@ export default {
   methods: {
     add() {
       this.$store.dispatch("addingNotes", {
-        id: this.$store.getters.getNotes.length + 1,
+        id: this.notes.length + 1,
         title: this.title,
         description: this.description,
       });
