@@ -19,9 +19,18 @@ const store = new Vuex.Store({
         complete: false
       },
     ]
+    ,
+    formData: {
+      id: null,
+      title: "",
+      description: "",
+      editMode: false,
+
+    }
   },
   getters: {
-    getNotes: state => state.notes
+    getNotes: state => state.notes,
+    getFormData: state => state.formData
   },
   mutations: {
     NotesFromLocalStorage: (state) => {
@@ -31,13 +40,14 @@ const store = new Vuex.Store({
       }
     },
     addNotes: (state, newNote) => {
-      alert('Are you sure to add this note?')
-      if (newNote.title !== '' && newNote.description !== '') {
-        state.notes.push(newNote)
-        localStorage.setItem("notes", JSON.stringify(state.notes))
+      if (newNote.title === '' && newNote.description === '') {
+        alert("Please fill in inputs field ")
+
       }
       else {
-        alert("Please fill in inputs field ")
+        alert('Are you sure to add this note?')
+        state.notes.push(newNote)
+        localStorage.setItem("notes", JSON.stringify(state.notes))
       }
     }
     ,

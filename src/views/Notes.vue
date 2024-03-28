@@ -1,25 +1,6 @@
 <template>
   <div>
-    <form class="form" @submit.prevent="editMode ? update() : add()">
-      <input
-        type="text"
-        placeholder="title of notes"
-        class="input"
-        id="title"
-        v-model="title"
-      />
-      <textarea
-        placeholder="description"
-        class="input"
-        id="desc"
-        v-model="description"
-      ></textarea>
-      <input
-        type="submit"
-        :value="editMode ? 'Update' : 'Create'"
-        class="btn"
-      />
-    </form>
+    <CrudForm />
     <table>
       <tr v-for="note in notes" :key="note.id">
         <td>{{ note.title }}</td>
@@ -46,53 +27,28 @@
 <script>
 import "../assets/main.css";
 import { mapGetters } from "vuex";
+import CrudForm from "../components/CrudForm.vue";
 
 export default {
   name: "Notes",
-  data() {
-    return {
-      title: "",
-      description: "",
-      id: null,
-      editMode: false,
-    };
+  components: {
+    CrudForm,
   },
   computed: {
     ...mapGetters({
       notes: "getNotes",
+      FormData: "getFormData",
     }),
   },
   methods: {
-    add() {
-      this.$store.dispatch("addingNotes", {
-        id: this.notes.length + 1,
-        title: this.title,
-        description: this.description,
-      });
-      this.resetForm();
-    },
     remove(id) {
       this.$store.dispatch("deleteingNotes", id);
     },
     edit(note) {
-      this.id = note.id;
-      this.title = note.title;
-      this.description = note.description;
-      this.editMode = true;
-    },
-    update() {
-      this.$store.dispatch("updateingNote", {
-        id: this.id,
-        title: this.title,
-        description: this.description,
-      });
-      this.resetForm();
-    },
-    resetForm() {
-      (this.editMode = false),
-        (this.title = ""),
-        (this.description = ""),
-        (this.id = null);
+      this.FormData.id = note.id;
+      this.FormData.title = note.title;
+      this.FormData.description = note.description;
+      this.FormData.editMode = true;
     },
   },
   filters: {

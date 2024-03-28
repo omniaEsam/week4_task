@@ -1,60 +1,63 @@
-<!-- <template>
- <div>
-    <form class="form" @submit.prevent="add()">
-        <input type="text" placeholder="title of notes" class="input" id="title" v-model="title">
-        <textarea  placeholder="description" class="input" id="desc" v-model="description"></textarea>
-        <input type="submit" value="Create" id="btn">
+<template>
+  <div>
+    <form class="form" @submit.prevent="formData.editMode ? update() : add()">
+      <input
+        type="text"
+        placeholder="title of notes"
+        class="input"
+        id="title"
+        v-model="formData.title"
+      />
+      <textarea
+        placeholder="description"
+        class="input"
+        id="desc"
+        v-model="formData.description"
+      ></textarea>
+      <input
+        type="submit"
+        :value="formData.editMode ? 'Update' : 'Create'"
+        class="btn"
+      />
     </form>
- </div>
+  </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
- name:'CrudForm',
- data(){
-    return{
-         title: '',
-        description: '',
-    }
- },
- methods:{
-     add(){
-        this.$store.dispatch('addingNotes' , {
-            id:this.$store.getters.getNotes.length+1,
-            title: this.title ,
-            description:this.description
-        })
-    }
-    ,
-     
-   
- }
-}
+  name: "CrudForm",
+
+  computed: {
+    ...mapGetters({
+      notes: "getNotes",
+      formData: "getFormData",
+    }),
+  },
+  methods: {
+    add() {
+      this.$store.dispatch("addingNotes", {
+        id: this.notes.length + 1,
+        title: this.formData.title,
+        description: this.formData.description,
+      });
+      this.resetForm();
+    },
+    update() {
+      this.$store.dispatch("updateingNote", {
+        id: this.formData.id,
+        title: this.formData.title,
+        description: this.formData.description,
+      });
+      this.resetForm();
+    },
+    resetForm() {
+      (this.formData.editMode = false),
+        (this.formData.title = ""),
+        (this.formData.description = ""),
+        (this.formData.id = null);
+    },
+  },
+};
 </script>
 
-<style  scoped>
- .form{
-    background: whitesmoke;
-    width: 28%;
-    margin: auto;
-    padding: 15px;
- }
- .input{
-    margin: 10px;
-    padding: 10px 120px 10px 10px;
-    border-radius: 6px;
-    border: 1px solid gray;
-    font-size: 1rem;
-    display: block;
-}
-#btn{
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 5px;
-    cursor: pointer;
-
-}
-</style>
- -->
