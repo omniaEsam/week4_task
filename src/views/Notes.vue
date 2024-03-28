@@ -1,14 +1,18 @@
 <template>
   <div>
-  <form class="form" @submit.prevent="editMode ? update() : add()">
-        <input type="text" placeholder="title of notes" class="input" id="title" v-model="title">
+  <form class="form" @submit.prevent = "editMode ? update() : add()">
+        <input type="text" placeholder="title of notes" class="input" id="title" v-model='title' >
         <textarea  placeholder="description" class="input" id="desc" v-model="description"></textarea>
-        <input type="submit" :value="editMode ? 'Update' : 'Create'" id="btn" >
+        <input type="submit" :value="editMode ? 'Update' : 'Create' " class="btn" >
     </form>
   <table>
      <tr v-for="note in notes" :key="note.id">
       <td >{{note.title}}</td>
       <td>{{note.description | truncate}}</td>
+      <td v-if="!note.complete">
+      <input type="checkbox" v-model="note.complete" id="check">
+      </td>
+      <td v-else><span>Completed</span></td>
       <td> <button class="btn" id="update" @click="edit(note)">Edit</button></td>
       <td> <button class="btn" id="delete" @click="remove(note.id)">Delete</button> </td>
      </tr>
@@ -17,6 +21,7 @@
 </template>
 
 <script>
+import '../assets/main.css'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -26,7 +31,7 @@ data(){
          title: '',
         description: '',
         id:null,
-        editMode:false
+        editMode:false,
     }
  },
  computed:{
@@ -41,15 +46,16 @@ data(){
             title: this.title ,
             description:this.description
         })
+         this.resetForm()
     },
     remove(id){
         this.$store.dispatch('deleteingNotes', id)
     },
     edit(note){
-          this.editMode = true
           this.id = note.id
           this.title = note.title
           this.description = note.description
+          this.editMode = true
     },
     update(){
          this.$store.dispatch('updateingNote' ,{
@@ -64,73 +70,18 @@ data(){
         this.title = '',
         this.description = '',
         this.id = null
-    }
-  },
+    },
+    
+  }
+  ,
   filters:{
     truncate: function(value){
-        return value.substring(0,10) + '....'
+        if(value !== ''){
+           return  value.substring(0,15) + '....'
+        }
+       
     }
   }
 
 }
 </script>
-<style scoped>
-
-table{
-    width: 60%;
-    margin: auto;
-    border-collapse: collapse;
-    border: 1px solid whitesmoke;
-    margin-top: 25px;
-    color: #333;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-weight: 600;
-   vertical-align: middle;
-   text-align: center;
-}
-td{
-width: 20px;
- padding: 10px;
- background: whitesmoke;
- border-bottom: 1px solid gray;
-
-}
-.btn{
-    border: none;
-    color: white;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-#update{
-    background: #2c3e50;
-
-}
-#delete{
-    background: rgb(218, 20, 20);
-}
-.form{
-    background: whitesmoke;
-    width: 28%;
-    margin: auto;
-    padding: 15px;
- }
- .input{
-    margin: 10px;
-    padding: 10px 120px 10px 10px;
-    border-radius: 6px;
-    border: 1px solid gray;
-    font-size: 1rem;
-    display: block;
-}
-#btn{
-    background: #2c3e50;
-    color: white;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 5px;
-    cursor: pointer;
-
-}
-</style>

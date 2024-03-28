@@ -9,12 +9,14 @@ const store = new Vuex.Store({
         {
           id:1 ,
           title:"learn html" , 
-          description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, quas! Sed placeat provident vero, suscipit totam sapiente nulla ut aut. Dolore nam reiciendis maxime autem eum. At dicta quos doloremque! "
+          description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, quas! Sed placeat provident vero, suscipit totam sapiente nulla ut aut. Dolore nam reiciendis maxime autem eum. At dicta quos doloremque! ",
+          complete:false
          },
         {
           id:2 ,
           title:"learn css" , 
-          description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, quas! Sed placeat provident vero, suscipit totam sapiente nulla ut aut. Dolore nam reiciendis maxime autem eum. At dicta quos doloremque!"
+          description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, quas! Sed placeat provident vero, suscipit totam sapiente nulla ut aut. Dolore nam reiciendis maxime autem eum. At dicta quos doloremque!",
+          complete:false
         },
       ]
     },
@@ -22,10 +24,21 @@ const store = new Vuex.Store({
       getNotes: state => state.notes
     },
     mutations: {
+      NotesFromLocalStorage:(state) =>{
+        const notes = localStorage.getItem('notes');
+        if (notes) {
+          state.notes = JSON.parse(notes);
+        }
+       },
       addNotes: (state ,newNote )=>{
         alert('Are you sure to add this note?')
-        state.notes.push(newNote)
+        if(newNote.title !== '' && newNote.description !== ''){
+          state.notes.push(newNote)
         localStorage.setItem("notes" , JSON.stringify(state.notes))
+        }
+        else{
+          alert("Please fill in inputs field ")
+        }
       }
       ,
       deleteNotes :(state , id)=>
@@ -36,17 +49,20 @@ const store = new Vuex.Store({
       },
       updateNote:(state , updateNote)=>{
         alert('Are you sure about update this note?')
-        const index = state.notes.findIndex(note =>{note.id === updateNote.id})
+        const index = state.notes.findIndex(note =>note.id === updateNote.id)
         if(index !== -1){
-          state.notes[index] = updateNote
-        }
+           state.notes.splice(index ,1,updateNote)
         localStorage.setItem("notes" , JSON.stringify(state.notes))
+
+        }
       }
     },
     actions: {
-      addingNotes: ({commit} , newNote)=>{commit('addNotes' , newNote)},
-      deleteingNotes:({commit} , id)=>{commit('deleteNotes' , id)},
-      updateingNote:({commit} , updateNote)=>{commit('updateNote' , updateNote)},
+      addingNotes: ({commit} , newNote)=>commit('addNotes' , newNote),
+      deleteingNotes:({commit} , id)=>commit('deleteNotes' , id),
+      updateingNote:({commit} , updateNote)=>commit('updateNote' , updateNote),
+      loadingNoteFromLocalStorge:({commit})=>commit('NotesFromLocalStorage')
     }
   })
+  store.dispatch('loadingNoteFromLocalStorge')
   export default store;
